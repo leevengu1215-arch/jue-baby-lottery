@@ -19,6 +19,8 @@ async function request(path,method='GET',token=A,body){return worker.fetch(new R
  await request('/api/profile','POST',A,{name:'A改名',face:'🦊'});await request('/api/join','POST',A,{pool:'girl'});
  snap=await (await request('/api/pools','GET',B)).json();assert.equal(snap.pools.boy.count,0);assert.equal(snap.pools.girl.count,2);assert.equal(snap.me.name,'B');
  assert.equal((await request('/api/join','POST',A,{pool:'bad'})).status,400);
+ await request('/api/leave','POST',A,{});await request('/api/leave','POST',A,{});snap=await (await request('/api/pools','GET',A)).json();assert.equal(snap.pools.girl.count,1);assert.equal(snap.me.pool,null);assert.equal(snap.me.name,'A改名');
+
  const cors=await worker.fetch(new Request('https://api.example.test/api/pools',{headers:{Origin:'https://evil.example'}}),{DB});assert.equal(cors.status,403);
  await request('/api/profile','DELETE',A);await request('/api/profile','DELETE',B);snap=await (await request('/api/pools','GET','')).json();assert.equal(snap.pools.girl.count,0);
  console.log('PASS SQLite API: empty counts, authenticated writes, repeat join, profile edit, two identities, switching, CORS, token isolation, cleanup.');

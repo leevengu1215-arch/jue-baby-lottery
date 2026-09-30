@@ -60,6 +60,11 @@ export default {
     if(!result.meta.changes)bad('请先保存头像和昵称',409);
     return json({ok:true});
    }
+   if(url.pathname==='/api/leave'&&request.method==='POST'){
+    const hash=await tokenHash(request,true);
+    await db.prepare('UPDATE members SET pool=NULL,updated_at=? WHERE token_hash=?').bind(Date.now(),hash).run();
+    return json({ok:true});
+   }
    // Owner-token-only removal also lets integration tests clean up their own records.
    if(url.pathname==='/api/profile'&&request.method==='DELETE'){
     await db.prepare('DELETE FROM members WHERE token_hash=?').bind(await tokenHash(request,true)).run();
